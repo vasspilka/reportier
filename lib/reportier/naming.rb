@@ -1,7 +1,11 @@
 module Reportier
-  module Naming
+  class Namer
     
-    def naming(item)
+    def name_class(item)
+      create_string(item).capitalize
+    end
+
+    def name_item(item)
       pluralize(create_string(item))
     end
 

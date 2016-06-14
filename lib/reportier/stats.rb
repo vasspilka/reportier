@@ -1,7 +1,5 @@
 module Reportier
-
   class Tracker
-    include Naming
 
     def self.get
       @current ||= new
@@ -22,7 +20,7 @@ module Reportier
 
     def add(item)
       (report && clear) unless active?
-      item_name = naming(item)
+      item_name = name(item)
       create_accessor(item_name) unless (eval "@#{item_name}")
       eval "@#{item_name} += 1"
       item_added
@@ -35,7 +33,7 @@ module Reportier
     end
 
     def to_json
-      to_hash.to_json
+      "{#{to_hash.map { |k,v|  "\"#{k.to_s}\": #{v.to_s}"  }.flatten.join(",\n")}}"
     end
 
     def to_hash
@@ -50,6 +48,10 @@ module Reportier
 
     def item_added
       "item added"
+    end
+
+    def name(item)
+      Namer.new.name_item(item)
     end
 
     def clear
@@ -81,7 +83,7 @@ module Reportier
     def _initialize_default_reporting_vars
       Default::REPORTING_VARS.each do |key, val|
         raise TypeError unless value.kind_of? Integer
-        eval "@#{secure(key)} = #{val}"
+        eval "@#{name(key)} = #{val}"
       end
     end
   end

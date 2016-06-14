@@ -1,5 +1,4 @@
 module Reportier
-  extend Naming
   module Default
     extend Time
 
@@ -23,20 +22,14 @@ module Reportier
     _default_classes_create
   end
 
-  def _initialize_default_reporting_vars
-    Default::REPORTING_VARS.each do |key, val|
-      raise TypeError unless value.kind_of? Integer
-      eval "@#{secure(key)} = #{val}"
-    end
-  end
-
   private
 
   def self._default_classes_create
     Default::TYPES.each do |key, val|
       raise TypeError unless val.kind_of? Integer
+      s_key = Namer.new.name_class(key)
       eval %{
-      class #{secure(key)} < Tracker
+      class #{s_key} < Tracker
         def expires_at
           @started_at + #{val}
         end
