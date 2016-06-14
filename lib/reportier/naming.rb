@@ -9,11 +9,12 @@ module Reportier
 
     def create_string(item)
       return secure(item) if item.kind_of? String
-      item
+      item.class.to_s.downcase
     end
 
     def secure(string)
-      string.gsub(';', '_').gsub(' ', '_')
+      string.gsub("\n",'_').gsub(';', '').gsub(' ', '_').gsub('\'','_') \
+        .gsub('\n', '_')
     end
 
     def pluralize(string)

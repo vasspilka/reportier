@@ -9,7 +9,7 @@ module Reportier
 
     def self.add_to_all(item)
       Types::TYPES.each do |type, v|
-        eval "#{type}.get.add(item) if #{type}.get.active?"
+        eval "#{type}.get.add(item)"
       end
       "ok"
     end
@@ -73,14 +73,4 @@ module Reportier
     end
   end
 
-  Types::TYPES.each do |key, value|
-    raise TypeError unless value.kind_of? Integer
-    eval %{
-    class #{key} < Tracker
-      def expires_at
-        @started_at + #{value}
-      end
-    end
-    }
-  end
 end
