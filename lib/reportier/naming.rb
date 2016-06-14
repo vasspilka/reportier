@@ -8,8 +8,12 @@ module Reportier
     private
 
     def create_string(item)
-      return item.gsub(' ', '_') if item.kind_of? String
+      return secure(item) if item.kind_of? String
       item
+    end
+
+    def secure(string)
+      string.gsub(';', '_').gsub(' ', '_')
     end
 
     def pluralize(string)

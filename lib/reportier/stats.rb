@@ -2,14 +2,16 @@ module Reportier
 
   class Tracker
     include Naming
-    include Time
+
     def self.get
       @current ||= new
     end
 
     def self.add_to_all(item)
-      Daily .get.add(item)
-      Weekly.get.add(item)
+      Types::TYPES.each do |type, v|
+        eval "#{type}.get.add(item) if #{type}.get.active?"
+      end
+      "ok"
     end
 
     def initialize
@@ -22,6 +24,7 @@ module Reportier
       item_name = naming(item)
       create_accessor(item_name)
       eval "@#{item_name} += 1"
+      "ok"
     end
 
     def report
@@ -33,6 +36,10 @@ module Reportier
       to_hash.to_json
     end
 
+    def active?
+      DateTime.now < expires_at
+    end
+
     private
 
     def clear
@@ -40,10 +47,6 @@ module Reportier
         eval "#{var} = 0"
       end
       initialize
-    end
-
-    def active?
-      DateTime.now < expires_at
     end
 
     def create_accessor(name)
@@ -62,7 +65,7 @@ module Reportier
     end
 
     def expires_at
-      raise StandardError
+      @started_at
     end
 
     def to_hash
@@ -70,27 +73,14 @@ module Reportier
     end
   end
 
-  class Instant < Tracker
-    def expires_at
-      @started_at
+  Types::TYPES.each do |key, value|
+    raise TypeError unless value.kind_of? Integer
+    eval %{
+    class #{key} < Tracker
+      def expires_at
+        @started_at + #{value}
+      end
     end
-  end
-
-  class Hourly < Tracker
-    def expires_at
-      @started_at + hours(1)
-    end
-  end
-
-  class Daily < Tracker
-    def expires_at
-      @started_at + days(1)
-    end
-  end
-
-  class Weekly < Tracker
-    def expires_at
-      @started_at + weeks(1)
-    end
+    }
   end
 end

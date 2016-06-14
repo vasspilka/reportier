@@ -19,5 +19,9 @@ module Reportier
     def weeks(int)
       days(int) * 7
     end
+
+    def months(int)
+      days(int) * 30
+    end
   end
 end
