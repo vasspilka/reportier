@@ -13,8 +13,8 @@ module Reportier
     end
 
     def secure(string)
-      string.gsub("\n",'_').gsub(';', '').gsub(' ', '_').gsub('\'','_') \
-        .gsub('\n', '_')
+      string.gsub("\n",'_').gsub('\n', '_').gsub(';', '').gsub(' ', '_') \
+        .gsub('"', '').gsub('\'','')
     end
 
     def pluralize(string)

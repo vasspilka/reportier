@@ -11,29 +11,35 @@ module Reportier
       Types::TYPES.each do |type, v|
         eval "#{type}.get.add(item)"
       end
-      "ok"
+      item_added
     end
 
     def initialize
-      @report_type  = self.class.to_s.sub('Stats','')
+      @report_type  = self.class.to_s.sub('Reportier::','')
       @started_at   = DateTime.now
+      _initialize_default_reporting_vars
     end
 
     def add(item)
       (report && clear) unless active?
       item_name = naming(item)
-      create_accessor(item_name)
+      create_accessor(item_name) unless (eval "@#{item_name}")
       eval "@#{item_name} += 1"
-      "ok"
+      item_added
     end
 
     def report
       puts "#{@report_type} report started at #{@started_at}\n" +
-           attr_messages.inject(&:+)
+        attr_messages.inject(&:+).to_s
+      return true
     end
 
     def to_json
       to_hash.to_json
+    end
+
+    def to_hash
+      Hash[ *reporting_vars.collect { |v| [ v.to_s, (eval v.to_s) ] }.flatten ]
     end
 
     def active?
@@ -41,6 +47,10 @@ module Reportier
     end
 
     private
+
+    def item_added
+      "item added"
+    end
 
     def clear
       reporting_vars.each do |var|
@@ -68,9 +78,11 @@ module Reportier
       @started_at
     end
 
-    def to_hash
-      Hash[ *reporting_vars.collect { |v| [ v.to_s, (eval v.to_s) ] }.flatten ]
+    def _initialize_default_reporting_vars
+      Default::REPORTING_VARS.each do |key, val|
+        raise TypeError unless value.kind_of? Integer
+        eval "@#{secure(key)} = #{val}"
+      end
     end
   end
-
 end
