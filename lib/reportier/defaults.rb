@@ -11,6 +11,11 @@ module Reportier
 
     REPORTING_VARS = {}
 
+    REPORTERS = {
+     'console' => nil,
+     'slack'   => 'slack-reporter'
+    }
+
   end
 
   def self.set_default_reporting_vars(opts={})
@@ -22,7 +27,18 @@ module Reportier
     _default_classes_create
   end
 
+  def self.set_default_reporters(opts={})
+    Default::REPORTERS.merge!(oprs) 
+    _require_reporter_libraries
+  end
+
   private
+
+  def self._require_reporter_libraries
+    Default::REPORTERS.each do |name, lib|
+      require lib if lib
+    end
+  end
 
   def self._default_classes_create
     Default::TYPES.each do |key, val|

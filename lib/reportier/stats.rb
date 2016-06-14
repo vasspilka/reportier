@@ -15,11 +15,12 @@ module Reportier
     def initialize
       @report_type  = self.class.to_s.sub('Reportier::','')
       @started_at   = DateTime.now
+      @reporter     = Reporter.get
       _initialize_default_reporting_vars
     end
 
     def add(item)
-      (report && clear) unless active?
+      report unless active?
       item_name = name(item)
       create_accessor(item_name) unless (eval "@#{item_name}")
       eval "@#{item_name} += 1"
@@ -27,17 +28,15 @@ module Reportier
     end
 
     def report
-      puts "#{@report_type} report started at #{@started_at}\n" +
+      @reporter.call do
+        "#{@report_type} report started at #{@started_at}\n" +
         attr_messages.inject(&:+).to_s
-      return true
+      end
+      clear unless active?
     end
 
     def to_json
-      "{#{to_hash.map { |k,v|  "\"#{k.to_s}\": #{v.to_s}"  }.flatten.join(",\n")}}"
-    end
-
-    def to_hash
-      Hash[ *reporting_vars.collect { |v| [ v.to_s, (eval v.to_s) ] }.flatten ]
+      "{#{to_hash.map { |k,v| "\"#{k.to_s}\": #{v.to_s}" }.flatten.join(",\n")}}"
     end
 
     def active?
@@ -78,6 +77,10 @@ module Reportier
 
     def expires_at
       @started_at
+    end
+
+    def to_hash
+      Hash[ *reporting_vars.collect { |v| [ v.to_s, (eval v.to_s) ] }.flatten ]
     end
 
     def _initialize_default_reporting_vars
