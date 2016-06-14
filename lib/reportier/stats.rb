@@ -1,6 +1,8 @@
 module Reportier
 
   class Tracker
+    include Naming
+    include Time
     def self.get
       @current ||= new
     end
@@ -17,7 +19,7 @@ module Reportier
 
     def add(item)
       (report && clear) unless active?
-      item_name = naming(item) + 's'
+      item_name = naming(item)
       create_accessor(item_name)
       eval "@#{item_name} += 1"
     end
@@ -42,11 +44,6 @@ module Reportier
 
     def active?
       DateTime.now < expires_at
-    end
-
-    def naming(item)
-      return item.gsub(' ', '_') if item.kind_of? String
-      item.class.to_s.downcase
     end
 
     def create_accessor(name)
@@ -81,19 +78,19 @@ module Reportier
 
   class Hourly < Tracker
     def expires_at
-      @started_at + 1.hour
+      @started_at + hours(1)
     end
   end
 
   class Daily < Tracker
     def expires_at
-      @started_at + 1.day
+      @started_at + days(1)
     end
   end
 
   class Weekly < Tracker
     def expires_at
-      @started_at + 1.week
+      @started_at + weeks(1)
     end
   end
 end
