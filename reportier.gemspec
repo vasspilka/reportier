@@ -1,6 +1,8 @@
+require 'lib/reportier/version'
+
 Gem::Specification.new do |s|
   s.name          = 'reportier'
-  s.version       = '0.0.0'
+  s.version       = Reportier::VERSION
   s.date          = '2016-06-13'
   s.summary       = "A stat tracker that reports"
   s.description   = "A stat tracker that reports automatically as you just add items"
