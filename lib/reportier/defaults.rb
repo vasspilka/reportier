@@ -12,8 +12,7 @@ module Reportier
     REPORTING_VARS = {}
 
     REPORTERS = {
-     console: nil,
-     slack:   'slack-reporter'
+     console: nil
     }
 
     PERSISTER = :memory
@@ -30,7 +29,7 @@ module Reportier
   end
 
   def self.set_default_reporters(opts={})
-    Default::REPORTERS.merge!(oprs) 
+    Default::REPORTERS.merge!(opts) 
     _require_reporter_libraries
   end
 

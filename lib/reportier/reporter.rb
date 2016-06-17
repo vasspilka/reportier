@@ -24,9 +24,9 @@ module Reportier
 
     def to_slack(message)
       type = message.split.first + '_tracker'
-      # SlackReporter.new(type).call do
-      #   message
-      # end
+      SlackReporter.new(type).call do
+        message
+      end
     end
 
     def to_twilio
