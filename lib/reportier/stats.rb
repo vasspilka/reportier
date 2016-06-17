@@ -1,16 +1,10 @@
 module Reportier
+
   class Instant
     attr_accessor :reporter, :persister
 
     def self.get
       @current ||= new
-    end
-
-    def self.add_to_all(item)
-      Types::TYPES.each do |type, v|
-        eval "#{type}.get.add(item)"
-      end
-      item_added
     end
 
     def initialize(opts = {})
