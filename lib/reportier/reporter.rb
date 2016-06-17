@@ -29,8 +29,20 @@ module Reportier
       end
     end
 
+    def to_logger(message)
+      create_dir('log') unless Dir.exists? 'log'
+      Logger.new('log/reportier.log').info("\n" + message)
+    end
+
     def to_twilio
 
+    end
+
+    private
+
+    def create_dir(dir)
+      require 'fileutils'
+      FileUtils.mkdir_p dir
     end
   end
 end
