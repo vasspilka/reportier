@@ -51,8 +51,8 @@ module Reportier
 
     def _initialize_default_reporting_vars
       Default::REPORTING_VARS.each do |key, val|
-        raise TypeError unless value.kind_of? Integer
-        eval "@#{Name.new.name(key)} = #{val}"
+        raise TypeError unless val.kind_of? Integer
+        eval "@#{Namer.new.name(key)} = #{val}"
       end
     end
   end
