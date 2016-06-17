@@ -12,15 +12,11 @@ module Reportier
 
     def call(tracker, &blk)
       @reporters.each do |reporter, v|
-        eval "to_#{name(reporter)} \"#{blk.call}\""
+        eval "to_#{Namer.new.name(reporter)} \"#{blk.call}\""
       end
     end
 
     private
-
-    def name(item)
-      Namer.new.send(:secure, item.to_s)
-    end
 
     def to_console(message)
       puts message

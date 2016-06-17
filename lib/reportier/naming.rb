@@ -15,18 +15,18 @@ module Reportier
 
     private
 
-    def stringlike?(item)
-      item.is_a?(String) || item.is_a?(Symbol)
-    end
-
     def create_string(item)
-      return secure(item) if 
+      return secure(item.to_s) if stringy?(item)
       item.class.to_s.downcase
     end
 
     def secure(string)
-      string.to_s.gsub("\n",'_').gsub('\n', '_').gsub(';', '').gsub(' ', '_') \
+      string.gsub("\n",'_').gsub('\n', '_').gsub(';', '').gsub(' ', '_') \
         .gsub('"', '').gsub('\'','')
+    end
+
+    def stringy?(item)
+      item.is_a?(String) || item.is_a?(Symbol)
     end
 
     def pluralize(string)

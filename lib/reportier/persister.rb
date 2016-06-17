@@ -23,14 +23,15 @@ module Reportier
 
     private
 
-    def name(item)
-      Namer.new.send(:secure, item.to_s)
-    end
-
     def attr_messages
       reporting_vars.map do |var|
         "#{var}: #{eval var.to_s}\n"
       end
+    end
+    
+    def create_accessor(name)
+      self.class.module_eval "attr_accessor :#{name}"
+      eval "@#{name} ||= 0"
     end
 
     def to_hash
@@ -51,16 +52,14 @@ module Reportier
     def _initialize_default_reporting_vars
       Default::REPORTING_VARS.each do |key, val|
         raise TypeError unless value.kind_of? Integer
-        eval "@#{name(key)} = #{val}"
+        eval "@#{Name.new.name(key)} = #{val}"
       end
-    end
-
-    def create_accessor(name)
-      self.class.module_eval "attr_accessor :#{name}"
-      eval "@#{name} ||= 0"
     end
   end
   class MemoryPersister < Persister; end
+  class RedisPersister  < Persister
+
+  end
 end
 
 
