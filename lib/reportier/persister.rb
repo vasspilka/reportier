@@ -1,7 +1,7 @@
 module Reportier
   class Persister
     def self.get
-      @current ||= eval "#{Namer.new.name_class(Default::PERSISTER)}Persister.new"
+      eval "#{Namer.new.name_class(Default::PERSISTER)}Persister.new"
     end
 
     def initialize
