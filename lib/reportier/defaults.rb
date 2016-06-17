@@ -12,9 +12,11 @@ module Reportier
     REPORTING_VARS = {}
 
     REPORTERS = {
-     'console' => nil,
-     'slack'   => 'slack-reporter'
+     console: nil,
+     slack:   'slack-reporter'
     }
+
+    PERSISTER = :memory
 
   end
 
@@ -45,7 +47,7 @@ module Reportier
       raise TypeError unless val.kind_of? Integer
       s_key = Namer.new.name_class(key)
       eval %{
-      class #{s_key} < Tracker
+      class #{s_key} < Instant
         def expires_at
           @started_at + #{val}
         end

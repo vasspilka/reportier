@@ -1,16 +1,16 @@
 module Reportier
   class Reporter
+    attr_accessor :reporters
+
     def self.get
       @current ||= new(Default::REPORTERS)
     end
-
-    attr_accessor :reporters
 
     def initialize(reporters)
       @reporters = reporters
     end
 
-    def call(&blk)
+    def call(tracker, &blk)
       @reporters.each do |reporter, v|
         eval "to_#{name(reporter)} \"#{blk.call}\""
       end
@@ -19,7 +19,7 @@ module Reportier
     private
 
     def name(item)
-      Namer.new.send(:secure, item)
+      Namer.new.send(:secure, item.to_s)
     end
 
     def to_console(message)
@@ -27,7 +27,8 @@ module Reportier
     end
 
     def to_slack(message)
-      # SlackReporter.new.call do
+      type = message.split.first + '_tracker'
+      # SlackReporter.new(type).call do
       #   message
       # end
     end
