@@ -3,6 +3,7 @@
 This is a tracker that tracks the count of events.
 
 ## Use
+`gem 'reportier'`
 
 Using the Tracker is fairly simple, by default there are 4 types of trackers.
 An `Hourly`, a `Daily` a `Weekly` and a `Monthly`.
@@ -84,11 +85,6 @@ There are many more features to come, as persiters.
 This has been kind of a personal project, please give me feedback on anything that has room for improvement.
 
 
-
-
-
-
-
-
+This gem is not tested and could be unsafe for production environment
 
 
