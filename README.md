@@ -88,3 +88,12 @@ This has been kind of a personal project, please give me feedback on anything th
 This gem is not tested and could be unsafe for production environment
 
 
+## TODO
+
+Change from instance variables to hash for memory persistance... damn this is silly
+
+Defaults per type or tracker
+
+Redis persister
+
+
