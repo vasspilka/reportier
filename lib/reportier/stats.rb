@@ -1,5 +1,6 @@
 module Reportier
 
+  require 'date'
   class Instant
     attr_accessor :reporter, :persister
 
@@ -9,7 +10,7 @@ module Reportier
 
     def initialize(opts = {})
       @report_type  = self.class.to_s.sub('Reportier::','')
-      @started_at   = DateTime.now
+      @started_at   = _set_started_at
       @reporter     = opts[:reporter]  || Reporter.get
       @persister    = opts[:persister] || Persister.get
     end
@@ -52,6 +53,21 @@ module Reportier
 
     def expires_at
       @started_at
+    end
+
+    private
+
+    def _set_started_at
+      return DateTime.now if _set_to_now?
+      expires_at
+    end
+
+    def _set_to_now?
+      (@started_at == nil) || long_due?
+    end
+
+    def _long_due?
+      expires_at < (DateTime.now - Reportier::Default::TYPES[@report_type])
     end
   end
 end
