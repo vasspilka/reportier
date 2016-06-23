@@ -73,25 +73,31 @@ module Reportier
     end
 
     def incr(item)
-      Redis.current.incr "#{@tracker}:#{item}"
+      @something = item
+      pry
+      Redis.current.incr name(item)
     end
 
     def set(item, val)
-      Redis.current.set "#{@tracker}:#{item}", val
+      Redis.current.set name(item), val
     end
 
     def get(item)
-      Redis.current.get "#{@tracker}:#{item}"
+      Redis.current.get name(item)
     end
 
     def reporting_vars
-      Redis.current.keys("#{@tracker}:*").map do |var|
-        var.sub("#{@tracker}:",'')
+      Redis.current.keys(name + '*').map do |var|
+        var.sub(name,'')
       end
+    end
+    
+    def name(item=nil)
+      "#{@tracker}:#{item}"
     end
 
     def clear
-      Redis.current.del(Redis.current.keys("#{@tracker}:*"))
+      Redis.current.del(Redis.current.keys(name))
     rescue Redis::CommandError
     end
   end
