@@ -1,18 +1,20 @@
 module Reportier
   class Persister
-    def self.get
-      eval "#{Namer.new.name_class(Default::PERSISTER)}Persister.new"
+    def self.get(tracker)
+      eval "#{Namer.new.name_class(Default::PERSISTER)}" \
+      + "Persister.new('#{tracker}')"
     end
 
-    def initialize
+    def initialize(tracker)
+      @tracker = tracker
       @reporting_vars = {}
       _initialize_default_reporting_vars
     end
 
     def save(item)
       item = item.to_sym
-      initialize_reporting_var(item) unless @reporting_vars[item]
-      @reporting_vars[item] += 1
+      initialize_reporting_var(item) unless get(item)
+      incr(item)
     end
 
     def report
@@ -29,14 +31,26 @@ module Reportier
 
     private
 
+    def incr(item)
+      @reporting_vars[item] += 1
+    end
+
+    def get(item)
+      @reporting_vars[item]
+    end
+
+    def set(item, val)
+      @reporting_vars[item] = 0
+    end
+
     def attr_messages
-      @reporting_vars.map do |key, val|
+      to_hash.map do |key, val|
         "#{key}: #{val}\n"
       end
     end
     
     def initialize_reporting_var(name)
-      @reporting_vars[name] = 0
+      set(name, 0)
     end
 
     def to_hash
@@ -52,7 +66,32 @@ module Reportier
   end
   class MemoryPersister < Persister; end
   class RedisPersister  < Persister
+    private
 
+    def to_hash
+      array = reporting_vars.map do |key|
+        [key, get(key)]
+      end
+      Hash[array]
+    end
+
+    def incr(item)
+      Redis.current.incr "#{@tracker}:#{item}"
+    end
+
+    def set(item, val)
+      Redis.current.set "#{@tracker}:#{item}", val
+    end
+
+    def get(item)
+      Redis.current.get "#{@tracker}:#{item}"
+    end
+
+    def reporting_vars
+      Redis.current.keys("#{@tracker}:*").map do |var|
+        var.sub("#{@tracker}:",'')
+      end
+    end
   end
 end
 

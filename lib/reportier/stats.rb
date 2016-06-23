@@ -1,6 +1,4 @@
 module Reportier
-
-  require 'date'
   class Instant
     attr_accessor :reporter, :persister
 
@@ -10,9 +8,10 @@ module Reportier
 
     def initialize(opts = {})
       @report_type  = self.class.to_s.sub('Reportier::','')
+      @tracker_name = Namer.new.name "#{opts[:name]}#{@report_type}Tracker"
       @started_at   = _set_started_at
       @reporter     = opts[:reporter]  || Reporter.get
-      @persister    = opts[:persister] || Persister.get
+      @persister    = opts[:persister] || Persister.get(@tracker_name)
     end
 
     def add(item)
