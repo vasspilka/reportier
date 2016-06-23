@@ -69,10 +69,7 @@ module Reportier
     private
 
     def to_hash
-      array = reporting_vars.map do |key|
-        [key, get(key)]
-      end
-      Hash[array]
+      Hash[reporting_vars.map { |k| [k, get(k)] }]
     end
 
     def incr(item)
@@ -91,6 +88,11 @@ module Reportier
       Redis.current.keys("#{@tracker}:*").map do |var|
         var.sub("#{@tracker}:",'')
       end
+    end
+
+    def clear
+      Redis.current.del(Redis.current.keys("#{@tracker}:*"))
+    rescue Redis::CommandError
     end
   end
 end
