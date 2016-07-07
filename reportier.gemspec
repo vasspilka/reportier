@@ -17,5 +17,7 @@ Gem::Specification.new do |s|
   s.homepage      = 'http://rubygems.org/gems/reportier'
   s.license       = 'MIT'
   s.required_ruby_version = '>= 2.2.0'
+
+  spec.add_development_dependency 'rspec'
 end
 
