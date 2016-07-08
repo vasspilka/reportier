@@ -2,11 +2,11 @@ module Reportier
   class Namer
 
     def name_class(item)
-      create_string(item).capitalize
+      name(item).split('_').map(&:capitalize).join
     end
 
     def name_item(item)
-      pluralize(create_string(item))
+      pluralize(name(item))
     end
 
     def name(item)
