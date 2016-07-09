@@ -25,7 +25,7 @@ module Reportier
     end
 
     def years(int)
-      months(int) * 12
+      Integer(days(int) * 365.25)
     end
   end
 end
