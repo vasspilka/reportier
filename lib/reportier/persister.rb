@@ -1,5 +1,6 @@
 module Reportier
   class Persister
+
     def self.get(tracker)
       eval "#{Namer.new.name_class(Default::PERSISTER)}" \
       + "Persister.new('#{tracker}')"
@@ -26,7 +27,7 @@ module Reportier
     end
 
     def clear
-      initialize
+      initialize @tracker
     end
 
     private
@@ -73,8 +74,6 @@ module Reportier
     end
 
     def incr(item)
-      @something = item
-      pry
       Redis.current.incr name(item)
     end
 

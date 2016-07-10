@@ -1,17 +1,19 @@
 module Reportier
-  class Instant
+  class Tracker
     attr_accessor :reporter, :persister
 
-    def self.get
-      @current ||= new
+    def self.[](type)
+      @current       ||= Hash.new
+      @current[type] ||= new(type: type)
     end
 
     def initialize(opts = {})
-      @report_type  = self.class.to_s.sub('Reportier::','')
-      @tracker_name = Namer.new.name "#{opts[:name]}#{@report_type}Tracker"
       @started_at   = _set_started_at
+      @type         = opts[:type] || :instant
+      @name         = Namer.new.name \
+        "#{opts[:name]}#{@type.capitalize}Tracker"
       @reporter     = opts[:reporter]  || Reporter.get
-      @persister    = opts[:persister] || Persister.get(@tracker_name)
+      @persister    = opts[:persister] || Persister.get(@name)
     end
 
     def add(item)
@@ -23,7 +25,7 @@ module Reportier
 
     def report
       @reporter.call(self) do
-        "#{@report_type} report started at #{@started_at}\n" +
+        "#{@type} report started at #{@started_at}\n" +
         @persister.report
       end
     end
@@ -51,7 +53,8 @@ module Reportier
     end
 
     def expires_at
-      @started_at
+      return 0 unless Reportier::Default::TYPES[@type]
+      @started_at + Reportier::Default::TYPES[@type]
     end
 
     private
@@ -66,7 +69,7 @@ module Reportier
     end
 
     def _long_due?
-      expires_at < (DateTime.now - Reportier::Default::TYPES[@report_type])
+      expires_at < (DateTime.now - Reportier::Default::TYPES[@type])
     end
   end
 end
