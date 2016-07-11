@@ -1,6 +1,6 @@
 module Reportier
   class Tracker
-    attr_accessor :reporter, :persister
+    attr_reader :reporter, :persister
 
     def self.[](type)
       @current       ||= Hash.new
@@ -54,7 +54,7 @@ module Reportier
 
     def expires_at
       return 0 unless Reportier::Default::TYPES[@type]
-      @started_at + Reportier::Default::TYPES[@type]
+      @started_at +   Reportier::Default::TYPES[@type]
     end
 
     private
