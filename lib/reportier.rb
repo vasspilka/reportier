@@ -1,3 +1,4 @@
+require          'date'
 require_relative 'reportier/naming'
 require_relative 'reportier/time'
 require_relative 'reportier/reporter'

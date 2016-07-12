@@ -2,12 +2,14 @@ module Reportier
   module Default
     extend Time
 
-    TYPES = {
-      :hourly   => hours(1),
-      :daily    => days(1),
-      :weekly   => weeks(1),
-      :monthly  => months(1)
-    }
+    TYPES = Hash.new(0).merge(
+      {
+        :hourly   => hours(1),
+        :daily    => days(1),
+        :weekly   => weeks(1),
+        :monthly  => months(1)
+      }
+    )
 
     REPORTING_VARS = {}
 

@@ -40,6 +40,7 @@ module Reportier
 
     def clear
       @persister.clear
+      @started_at = _set_started_at
     end
 
     def name(item)
@@ -47,8 +48,7 @@ module Reportier
     end
 
     def expires_at
-      return 0 unless Reportier::Default::TYPES[@type]
-      @started_at +   Reportier::Default::TYPES[@type]
+      @started_at + Reportier::Default::TYPES[@type]
     end
 
     private
@@ -59,7 +59,7 @@ module Reportier
     end
 
     def _set_to_now?
-      (@started_at == nil) || long_due?
+      (@started_at == nil) || _long_due?
     end
 
     def _long_due?

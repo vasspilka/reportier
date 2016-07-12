@@ -6,6 +6,8 @@ module Reportier
       eval "#{type}Persister.new('#{tracker}')"
     end
 
+    attr_reader :reporting_vars
+
     def initialize(tracker)
       @tracker = tracker
       @reporting_vars = {}
