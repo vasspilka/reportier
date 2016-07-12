@@ -25,7 +25,6 @@ module Reportier
 
   def self.set_default_types(opts={})
     Default::TYPES.merge!(opts)
-    _default_classes_create
   end
 
   def self.set_default_reporters(opts={})

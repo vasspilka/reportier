@@ -77,3 +77,7 @@ class Reportier::Reporter
   end
 end
 ```
+
+### TODO
+
+Need of refactoring defaults, they are not at all convinient
