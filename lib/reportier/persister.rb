@@ -2,8 +2,8 @@ module Reportier
   class Persister
 
     def self.get(tracker)
-      eval "#{Namer.new.name_class(Default::PERSISTER)}" \
-      + "Persister.new('#{tracker}')"
+      type = Namer.new.name_class(Default::PERSISTER)
+      eval "#{type}Persister.new('#{tracker}')"
     end
 
     def initialize(tracker)

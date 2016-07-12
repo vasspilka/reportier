@@ -18,9 +18,7 @@ module Reportier
 
     def add(item)
       (report && clear) unless active?
-      item_name = name(item)
-      @persister.save(item_name)
-      item_added
+      @persister.save(name(item))
     end
 
     def report
@@ -42,10 +40,6 @@ module Reportier
 
     def clear
       @persister.clear
-    end
-
-    def item_added
-      "item added"
     end
 
     def name(item)

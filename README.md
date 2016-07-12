@@ -15,9 +15,9 @@ as long as you keep adding items to them.
 Examples:
 
 ```
-Reportier::Daily.get.add('new user registration')
+Reportier::Tracker[:daily].add('new user registration')
 
-Reportier::Daily.get.report
+Reportier::Tracker[:daily].report
 # -> Daily report started at 2016-06-17T15:34:40+03:00
 # @new_user_registrations: 1
 ```
@@ -48,7 +48,7 @@ So the usage would be
 
 
 ```
-Reportier.set_default_types 'Yearly' => 1.year, 'BiDay' => 2.days
+Reportier.set_default_types yearly: 1.year, bidaily: 2.days
 ```
 
 These new tracker classes will be created and can be used normally like any other tracker,
@@ -77,23 +77,3 @@ class Reportier::Reporter
   end
 end
 ```
-
-
-## More
-
-There are many more features to come, as persiters.
-This has been kind of a personal project, please give me feedback on anything that has room for improvement.
-
-
-This gem is not tested and could be unsafe for production environment
-
-
-## TODO
-
-Change from instance variables to hash for memory persistance... damn this is silly
-
-Defaults per type or tracker
-
-Redis persister
-
-
