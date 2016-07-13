@@ -29,6 +29,12 @@ RSpec.describe Reportier::Tracker do
     it "clear should change @started_at" do
       expect{subject.send(:clear)}.to change { subject.started_at }
     end
+  end
 
+  describe "daily tracker" do
+    it "keeps track of stuff" do
+    end
+    it "expires exactly one day after it's been created" do
+    end
   end
 end
