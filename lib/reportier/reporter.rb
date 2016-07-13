@@ -3,7 +3,7 @@ module Reportier
     attr_accessor :reporters
 
     def self.get
-      @current ||= new(Default::REPORTERS)
+      @current ||= new(REPORTERS)
     end
 
     def initialize(reporters)

@@ -2,7 +2,7 @@ module Reportier
   class Persister
 
     def self.get(tracker)
-      type = Namer.new.name_class(Default::PERSISTER)
+      type = Namer.new.name_class(PERSISTER)
       eval "#{type}Persister.new('#{tracker}')"
     end
 
@@ -10,8 +10,9 @@ module Reportier
 
     def initialize(tracker)
       @tracker = tracker
+      @defaults = Defaults.new
       @reporting_vars = {}
-      _initialize_default_reporting_vars
+      _initialize_reporting_vars
     end
 
     def save(item)
@@ -60,11 +61,8 @@ module Reportier
       @reporting_vars
     end
 
-    def _initialize_default_reporting_vars
-      Default::REPORTING_VARS.each do |key, val|
-        raise TypeError unless val.kind_of? Integer
-        @reporting_vars[key] = val
-      end
+    def _initialize_reporting_vars
+      @reporting_vars.merge!(@defaults.reporting_vars)
     end
   end
   class MemoryPersister < Persister; end
