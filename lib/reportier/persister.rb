@@ -1,16 +1,17 @@
 module Reportier
   class Persister
 
-    def self.get(tracker)
-      type = Namer.new.name_class(PERSISTER)
-      eval "#{type}Persister.new('#{tracker}')"
+    def self.get(tracker, persister_type = DEFAULTS.persister)
+      type = Namer.new.name_class(persister_type)
+      persister = eval "#{type}Persister"
+      persister.new(tracker)
     end
 
     attr_reader :reporting_vars
 
     def initialize(tracker)
       @tracker = tracker
-      @defaults = Defaults.new
+      @defaults = tracker.defaults
       @reporting_vars = {}
       _initialize_reporting_vars
     end
@@ -92,7 +93,7 @@ module Reportier
     end
     
     def name(item=nil)
-      "#{@tracker}:#{item}"
+      "#{@tracker.name}:#{item}"
     end
 
     def clear

@@ -1,39 +1,43 @@
 module Reportier
-
-  TYPES          = Hash.new(0)
-  REPORTERS      = Hash.new
-  PERSISTER      = :memory
-
-  def self.set_default_types(opts={})
-    TYPES.merge!(opts)
-  end
-
-  def self.set_default_reporters(opts={})
-    REPORTERS.merge!(opts) 
-    _require_reporter_libraries
-  end
-
-  private
-
-  def self._require_reporter_libraries
-    REPORTERS.each do |name, lib|
-      require lib if lib
-    end
-  end
-
   class Defaults
-    attr_reader :reporting_vars
+    attr_accessor :types, :reporting_vars, :reporters,
+      :persister
 
-    def initialize
-      @reporting_vars = Hash.new
+    def self.global
+      @global ||= new
     end
 
-    def replace_defaults(hash)
-      @reporting_vars = hash
+    def initialize(opts={})
+      initialize_defaults
+      @reporting_vars.merge! Hash(opts[:reporting_vars])
     end
 
-    def update_defaults(hash)
+    def configure 
+      yield self
+    end
+
+    def update_reporting_vars(hash)
       @reporting_vars.merge!(hash)
+    end
+
+    def reporters=(opts)
+      @reporters = opts
+      _require_reporter_libraries
+    end
+
+    private
+
+    def initialize_defaults
+      @types          = Hash.new(0)
+      @reporting_vars = Hash.new
+      @reporters      = Hash.new
+      @persister      = :memory
+    end
+
+    def _require_reporter_libraries
+      @reporters.each do |name, lib|
+        require lib if lib
+      end
     end
   end
 end
