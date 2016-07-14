@@ -68,6 +68,18 @@ module Reportier
   end
   class MemoryPersister < Persister; end
   class RedisPersister  < Persister
+
+    def reporting_vars
+      Redis.current.keys(name + '*').map do |var|
+        var.sub(name,'')
+      end
+    end
+
+    def clear
+      Redis.current.del(Redis.current.keys(name))
+    rescue Redis::CommandError
+    end
+
     private
 
     def to_hash
@@ -85,20 +97,9 @@ module Reportier
     def get(item)
       Redis.current.get name(item)
     end
-
-    def reporting_vars
-      Redis.current.keys(name + '*').map do |var|
-        var.sub(name,'')
-      end
-    end
     
     def name(item=nil)
       "#{@tracker.name}:#{item}"
-    end
-
-    def clear
-      Redis.current.del(Redis.current.keys(name))
-    rescue Redis::CommandError
     end
   end
 end
