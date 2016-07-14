@@ -20,6 +20,11 @@ module Reportier
       @reporting_vars.merge!(hash)
     end
 
+    def types=(opts)
+      @types = Hash.new(0)
+      @types.merge! opts
+    end
+
     def reporters=(opts)
       @reporters = opts
       _require_reporter_libraries

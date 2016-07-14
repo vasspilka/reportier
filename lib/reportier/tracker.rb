@@ -21,7 +21,7 @@ module Reportier
 
     def add(item)
       (report && clear) unless active?
-      return if DEFAULTS.types[@type] == 0
+      return if Defaults.global.types[@type] == 0
       @persister.save(Namer.new.name_item(item))
     end
 
@@ -48,7 +48,7 @@ module Reportier
     end
 
     def expires_at
-      @started_at + DEFAULTS.types[@type]
+      @started_at + Defaults.global.types[@type]
     end
 
     private
@@ -63,7 +63,7 @@ module Reportier
     end
 
     def _long_due?
-      expires_at < (DateTime.now - DEFAULTS.types[@type])
+      expires_at < (DateTime.now - Defaults.global.types[@type])
     end
   end
 end

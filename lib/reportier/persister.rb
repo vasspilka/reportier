@@ -1,7 +1,7 @@
 module Reportier
   class Persister
 
-    def self.get(tracker, persister_type = DEFAULTS.persister)
+    def self.get(tracker, persister_type = Defaults.global.persister)
       type = Namer.new.name_class(persister_type)
       persister = eval "#{type}Persister"
       persister.new(tracker)

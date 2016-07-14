@@ -8,8 +8,6 @@ require_relative 'reportier/tracker'
 require_relative 'reportier/version'
 
 module Reportier
-  DEFAULTS = Defaults.global
-
   def self.add_to_all(item)
     @types.each do |type, v|
       Tracker[type].add(item)
