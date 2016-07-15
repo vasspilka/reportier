@@ -13,4 +13,8 @@ module Reportier
       Tracker[type].add(item)
     end
   end
+
+  def self.configure(&blk)
+    Defaults.global.configure &blk
+  end
 end

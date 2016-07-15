@@ -31,10 +31,28 @@ RSpec.describe Reportier::Tracker do
     end
   end
 
-  describe "daily tracker" do
-    it "keeps track of stuff" do
+  describe "minutely tracker" do
+    let(:tracker) { described_class[:minutely] }
+    subject { tracker }
+
+    before do
+      Reportier.configure do |c|
+        c.types          = { minutely: 60 }
+      end
     end
-    it "expires exactly one day after it's been created" do
+
+    it "expires exactly one minute after it's been created" do
+      expect(subject.active?).to eq true
+      expect(subject.send(:expires_at)).to eq (subject.started_at + 60)
+    end
+
+    it "keeps track of stuff" do
+      subject.add 'item'
+      expect(subject.persister.reporting_vars).not_to be_empty
+      expect(subject.persister.reporting_vars[:items]).to eq 1
+      subject.add 'item'
+      subject.add 'item'
+      expect(subject.persister.reporting_vars[:items]).to eq 3
     end
   end
 end
