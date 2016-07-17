@@ -80,4 +80,4 @@ end
 
 ### TODO
 
-Need of refactoring defaults, they are not at all convinient
+When persisted through redis trackers need to get their starting time from redis
