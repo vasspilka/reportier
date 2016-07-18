@@ -9,7 +9,6 @@ module Reportier
 
     def initialize(tracker)
       @tracker  = tracker
-      @defaults = tracker.defaults
       @reporting_vars = {}
       _initialize_reporting_vars
     end
@@ -29,11 +28,16 @@ module Reportier
     end
 
     def clear
-      initialize @tracker
+      @reporting_vars = {}
+      _initialize_reporting_vars
     end
 
     def get_date
       @tracker.started_at
+    end
+
+    def set_date(date)
+      @tracker.started_at = date
     end
 
     def to_hash
@@ -65,7 +69,7 @@ module Reportier
     end
 
     def _initialize_reporting_vars
-      @reporting_vars.merge!(@defaults.reporting_vars)
+      @reporting_vars.merge!(@tracker.defaults.reporting_vars)
     end
   end
   class MemoryPersister < Persister; end
@@ -78,6 +82,17 @@ module Reportier
 
     def to_hash
       Hash[reporting_vars.map { |k| [k, get(k).to_i] }]
+    end
+
+    def get_date
+      date = Redis.current.get "Reportier:DateFor#{name}"
+      return if date.empty?
+      DateTime.parse(date)
+    end
+
+    def set_date(date)
+      Redis.current.set "Reportier:DateFor#{name}", date.to_s
+      super
     end
 
     private

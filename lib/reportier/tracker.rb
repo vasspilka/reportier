@@ -1,7 +1,7 @@
 module Reportier
   class Tracker
-    attr_reader :reporter, :persister, :started_at, :type, :name,
-      :defaults
+    attr_accessor :started_at
+    attr_reader :reporter, :persister, :type, :name, :defaults
       
 
     def self.[](type)
@@ -10,13 +10,13 @@ module Reportier
     end
 
     def initialize(opts = {})
-      @started_at   = _set_started_at
-      @type         = opts[:type]
       @defaults     = Defaults.new
-      @name         = Namer.new.name \
-        "#{opts[:name]}#{@type && @type.capitalize}Tracker"
+      @type         = opts[:type]
       @reporter     = opts[:reporter]  || Reporter.get
       @persister    = opts[:persister] || Persister.get(self)
+      @name         = Namer.new.name \
+        "#{opts[:name]}#{@type && @type.capitalize}Tracker"
+      @persister.set_date(_set_date)
     end
 
     def add(item)
@@ -44,22 +44,22 @@ module Reportier
 
     def clear
       @persister.clear
-      @started_at = _set_started_at
+      @persister.set_date(_set_date)
     end
 
     def expires_at
-      @started_at + Defaults.global.types[@type]
+      @persister.get_date + Defaults.global.types[@type]
     end
 
     private
 
-    def _set_started_at
+    def _set_date
       return DateTime.now if _set_to_now?
-      expires_at
+      @persister.get_date || expires_at
     end
 
     def _set_to_now?
-      @started_at.nil? || _long_due?
+      @persister.get_date.nil? || _long_due?
     end
 
     def _long_due?

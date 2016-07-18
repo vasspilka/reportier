@@ -99,6 +99,7 @@ RSpec.describe Reportier::Tracker do
       it "will keep the same started_at date" do
         tracker      = described_class[:minutely]
         same_tracker = described_class.new(type: :minutely)
+        expect(tracker.started_at).to be_kind_of DateTime
         expect(tracker.started_at).to eq same_tracker.started_at
       end
     end
