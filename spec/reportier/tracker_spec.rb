@@ -86,7 +86,7 @@ RSpec.describe Reportier::Tracker do
         expect(subject.persister.to_hash).to be_empty
       end
 
-      it "will remember stuff" do
+      it "will remember its attributes" do
         tracker = described_class[:minutely]
         tracker.add 'item'
         tracker = described_class.new(type: :minutely)
@@ -94,6 +94,12 @@ RSpec.describe Reportier::Tracker do
         expect(tracker.persister.to_hash[:items]).to eq 1
 
         tracker.persister.clear
+      end
+
+      it "will keep the same started_at date" do
+        tracker      = described_class[:minutely]
+        same_tracker = described_class.new(type: :minutely)
+        expect(tracker.started_at).to eq same_tracker.started_at
       end
     end
 
