@@ -86,7 +86,7 @@ module Reportier
 
     def get_date
       date = Redis.current.get "Reportier:DateFor#{name}"
-      return if date.empty?
+      return if date.nil? || date.empty?
       DateTime.parse(date)
     end
 
