@@ -58,6 +58,14 @@ RSpec.describe Reportier::Tracker do
       expect(subject.persister.to_hash).to be_empty
     end
 
+    it "will not remmeber stuff" do
+      tracker = described_class[:minutely]
+      tracker.add 'item'
+      tracker = described_class.new(type: :minutely)
+
+      expect(tracker.persister.to_hash).to be_empty
+    end
+
     describe "with redis" do
       before do
         require 'redis'
@@ -77,6 +85,16 @@ RSpec.describe Reportier::Tracker do
         subject.persister.clear
         expect(subject.persister.to_hash).to be_empty
       end
+
+      it "will remember stuff" do
+        tracker = described_class[:minutely]
+        tracker.add 'item'
+        tracker = described_class.new(type: :minutely)
+
+        expect(tracker.persister.to_hash[:items]).to eq 1
+
+        tracker.persister.clear
+      end
     end
 
     after do
@@ -86,7 +104,6 @@ RSpec.describe Reportier::Tracker do
       class Reportier::Tracker
         @current[:minutely] = nil
       end
-      subject.persister.clear
     end
 
   end
