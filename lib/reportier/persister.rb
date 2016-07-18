@@ -7,10 +7,8 @@ module Reportier
       persister.new(tracker)
     end
 
-    attr_reader :reporting_vars
-
     def initialize(tracker)
-      @tracker = tracker
+      @tracker  = tracker
       @defaults = tracker.defaults
       @reporting_vars = {}
       _initialize_reporting_vars
@@ -32,6 +30,14 @@ module Reportier
 
     def clear
       initialize @tracker
+    end
+
+    def get_date
+      @tracker.started_at
+    end
+
+    def to_hash
+      @reporting_vars
     end
 
     private
@@ -58,10 +64,6 @@ module Reportier
       set(name, 0)
     end
 
-    def to_hash
-      @reporting_vars
-    end
-
     def _initialize_reporting_vars
       @reporting_vars.merge!(@defaults.reporting_vars)
     end
@@ -69,21 +71,21 @@ module Reportier
   class MemoryPersister < Persister; end
   class RedisPersister  < Persister
 
-    def reporting_vars
-      Redis.current.keys(name + '*').map do |var|
-        var.sub(name,'')
-      end
+    def clear
+      Redis.current.del(Redis.current.keys(name + '*'))
+    rescue Redis::CommandError
     end
 
-    def clear
-      Redis.current.del(Redis.current.keys(name))
-    rescue Redis::CommandError
+    def to_hash
+      Hash[reporting_vars.map { |k| [k, get(k).to_i] }]
     end
 
     private
 
-    def to_hash
-      Hash[reporting_vars.map { |k| [k, get(k)] }]
+    def reporting_vars
+      Redis.current.keys(name + '*').map do |var|
+        var.sub(name,'').to_sym
+      end
     end
 
     def incr(item)
@@ -103,5 +105,3 @@ module Reportier
     end
   end
 end
-
-

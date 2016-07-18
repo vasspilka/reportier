@@ -17,7 +17,7 @@ RSpec.describe Reportier::Tracker do
     it "should report instantly withot adding item" do
       expect(subject).to receive(:report)
       subject.add 'item'
-      expect(subject.persister.reporting_vars).to be_empty
+      expect(subject.persister.to_hash).to be_empty
       expect(subject.to_json).to eq "{}"
     end
 
@@ -46,13 +46,48 @@ RSpec.describe Reportier::Tracker do
       expect(subject.send(:expires_at)).to eq (subject.started_at + 60)
     end
 
-    it "keeps track of stuff" do
+    it "keeps track of stuff and can clear them" do
       subject.add 'item'
-      expect(subject.persister.reporting_vars).not_to be_empty
-      expect(subject.persister.reporting_vars[:items]).to eq 1
+      expect(subject.persister.to_hash).not_to be_empty
+      expect(subject.persister.to_hash[:items]).to eq 1
       subject.add 'item'
       subject.add 'item'
-      expect(subject.persister.reporting_vars[:items]).to eq 3
+      expect(subject.persister.to_hash[:items]).to eq 3
+
+      subject.persister.clear
+      expect(subject.persister.to_hash).to be_empty
     end
+
+    describe "with redis" do
+      before do
+        require 'redis'
+        Reportier.configure do |c|
+          c.persister     = :redis
+        end
+      end
+
+      it "keeps track of stuff and can clear them" do
+        subject.add 'item'
+        expect(subject.persister.to_hash).not_to be_empty
+        expect(subject.persister.to_hash[:items]).to eq 1
+        subject.add 'item'
+        subject.add 'item'
+        expect(subject.persister.to_hash[:items]).to eq 3
+
+        subject.persister.clear
+        expect(subject.persister.to_hash).to be_empty
+      end
+    end
+
+    after do
+      class Reportier::Defaults
+        @global = new
+      end
+      class Reportier::Tracker
+        @current[:minutely] = nil
+      end
+      subject.persister.clear
+    end
+
   end
 end
