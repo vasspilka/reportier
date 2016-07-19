@@ -9,7 +9,7 @@ require_relative 'reportier/version'
 
 module Reportier
   def self.add_to_all(item)
-    @types.each do |type, v|
+    Defaults.global.types.each do |type, v|
       Tracker[type].add(item)
     end
   end
