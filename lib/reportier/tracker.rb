@@ -48,18 +48,22 @@ module Reportier
     end
 
     def expires_at
-      @persister.get_date + Defaults.global.types[@type]
+      get_date + Defaults.global.types[@type]
+    end
+
+    def get_date
+      @persister.get_date
     end
 
     private
 
     def _set_date
       return DateTime.now if _set_to_now?
-      @persister.get_date || expires_at
+      active? ? get_date : expires_at
     end
 
     def _set_to_now?
-      @persister.get_date.nil? || _long_due?
+      get_date.nil? || _long_due?
     end
 
     def _long_due?
