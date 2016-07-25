@@ -102,6 +102,19 @@ RSpec.describe Reportier::Tracker do
         expect(tracker.started_at).to be_kind_of DateTime
         expect(tracker.started_at).to eq same_tracker.started_at
       end
+
+      describe "with default vars" do
+        before do
+          Reportier.configure do |c|
+            c.update_reporting_vars({ bananas: 5 })
+          end
+        end
+        
+        it "initializes with default reporting vars" do
+          hash = described_class.new.persister.to_hash
+          expect(hash[:bananas]).to eq 5
+        end
+      end
     end
 
     after do

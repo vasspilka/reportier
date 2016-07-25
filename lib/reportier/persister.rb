@@ -77,6 +77,7 @@ module Reportier
 
     def clear
       Redis.current.del(Redis.current.keys(name + '*'))
+      _initialize_reporting_vars
     rescue Redis::CommandError
     end
 
@@ -117,6 +118,12 @@ module Reportier
     
     def name(item=nil)
       "#{@tracker.name}:#{item}"
+    end
+
+    def _initialize_reporting_vars
+      @tracker.defaults.reporting_vars.each do |key, value|
+        set(key, value)
+      end
     end
   end
 end

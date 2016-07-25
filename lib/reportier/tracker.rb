@@ -10,7 +10,7 @@ module Reportier
     end
 
     def initialize(opts = {})
-      @defaults     = Defaults.new
+      @defaults     = Defaults.global
       @type         = opts[:type]
       @reporter     = opts[:reporter]  || Reporter.get
       @persister    = opts[:persister] || Persister.get(self)
