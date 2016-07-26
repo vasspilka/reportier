@@ -17,7 +17,7 @@ RSpec.describe Reportier::Tracker do
     it "should report instantly withot adding item" do
       expect(subject).to receive(:report)
       subject.add 'item'
-      expect(subject.persister.to_hash).to be_empty
+      expect(subject.to_hash).to be_empty
       expect(subject.to_json).to eq "{}"
     end
 
@@ -48,14 +48,14 @@ RSpec.describe Reportier::Tracker do
 
     it "keeps track of stuff and can clear them" do
       subject.add 'item'
-      expect(subject.persister.to_hash).not_to be_empty
-      expect(subject.persister.to_hash[:items]).to eq 1
+      expect(subject.to_hash).not_to be_empty
+      expect(subject.to_hash[:items]).to eq 1
       subject.add 'item'
       subject.add 'item'
-      expect(subject.persister.to_hash[:items]).to eq 3
+      expect(subject.to_hash[:items]).to eq 3
 
       subject.persister.clear
-      expect(subject.persister.to_hash).to be_empty
+      expect(subject.to_hash).to be_empty
     end
 
     it "will not remmeber stuff" do
@@ -63,7 +63,7 @@ RSpec.describe Reportier::Tracker do
       tracker.add 'item'
       tracker = described_class.new(type: :minutely)
 
-      expect(tracker.persister.to_hash).to be_empty
+      expect(tracker.to_hash).to be_empty
     end
 
     describe "with redis" do
@@ -76,14 +76,14 @@ RSpec.describe Reportier::Tracker do
 
       it "keeps track of stuff and can clear them" do
         subject.add 'item'
-        expect(subject.persister.to_hash).not_to be_empty
-        expect(subject.persister.to_hash[:items]).to eq 1
+        expect(subject.to_hash).not_to be_empty
+        expect(subject.to_hash[:items]).to eq 1
         subject.add 'item'
         subject.add 'item'
-        expect(subject.persister.to_hash[:items]).to eq 3
+        expect(subject.to_hash[:items]).to eq 3
 
         subject.persister.clear
-        expect(subject.persister.to_hash).to be_empty
+        expect(subject.to_hash).to be_empty
       end
 
       it "will remember its attributes" do
@@ -104,15 +104,12 @@ RSpec.describe Reportier::Tracker do
       end
 
       describe "with default vars" do
-        before do
+        it "initializes with default reporting vars" do
           Reportier.configure do |c|
             c.update_reporting_vars({ bananas: 5 })
           end
-        end
-        
-        it "initializes with default reporting vars" do
-          hash = described_class.new.persister.to_hash
-          expect(hash[:bananas]).to eq 5
+          tracker = described_class.new(name: 'Bananas')
+          expect(tracker.to_hash[:bananas]).to eq 5
         end
       end
     end

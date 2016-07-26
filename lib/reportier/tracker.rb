@@ -10,12 +10,12 @@ module Reportier
     end
 
     def initialize(opts = {})
+      @name         = Namer.new.name \
+        "#{opts[:name]}#{@type && @type.capitalize}Tracker"
       @defaults     = Defaults.global
       @type         = opts[:type]
       @reporter     = opts[:reporter]  || Reporter.get
       @persister    = opts[:persister] || Persister.get(self)
-      @name         = Namer.new.name \
-        "#{opts[:name]}#{@type && @type.capitalize}Tracker"
       @persister.set_date(_set_date)
     end
 
@@ -32,12 +32,16 @@ module Reportier
       end
     end
 
+    def active?
+      DateTime.now < expires_at
+    end
+
     def to_json
       @persister.to_json
     end
 
-    def active?
-      DateTime.now < expires_at
+    def to_hash
+      @persister.to_hash
     end
 
     private
