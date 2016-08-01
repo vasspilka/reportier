@@ -1,83 +1,136 @@
 # Reportier the stat tracker
 
-This is a tracker that tracks the count of events.
+This is a tracker that tracks the count of events. Most notable is that 
+as long as you keep addng items reportier will report automatically
+without using 3rd party software like cron.
 
-## Use
+## Usage
+
 `gem 'reportier'`
 
-Using the Tracker is fairly simple, by default there are 4 types of trackers.
-An `Hourly`, a `Daily` a `Weekly` and a `Monthly`.
-To add something to a tracker simply `.get` it and `#add` something.
+Use Reportier to track how manny times something happened in a certain ammount of time.
+Reportier has a minimal public interface however is quite powerfull inside.
 
-You can also `#report` the current state of the tracker, however trackers report and reset by themselves
-as long as you keep adding items to them.
-
-Examples:
+To use first configure it with intervals by setting a name and when to report
 
 ```
-Reportier::Tracker[:daily].add('new user registration')
+Reportier.configure do |c|
+  # Time is in seconds
+  c.trackers = {
+    hourly:   60 * 60,
+    bidaily:  60 * 60 * 24 * 2
+  }
+end
+```
 
-Reportier::Tracker[:daily].report
+Then you can add items to trackers and it will keep track of them.
+
+```
+  Reportier[:hourly].add "Home page visit"
+  # or
+  Reportier[:bidaily].add @newly_registered_user # object of type User
+```
+
+Note that you can add objects and Reporiter will track their class.
+You can also add the item to all *registered* <sup>[1](#myfootnote1)</sup> trackers by doing 
+
+```
+Reportier.add_to_all @item
+```
+
+You can mannually report or convert it to json.
+
+```
+Reportier[:daily].add('new user registration')
+
+Reportier[:daily].report
 # -> Daily report started at 2016-06-17T15:34:40+03:00
-# @new_user_registrations: 1
+# new_user_registrations: 1
+
+Reportier[:daily].to_json 
+# -> "{\"new_user_registrations\": 1}"
 ```
 
-You can also use `Reportier.add_to_all('we need to track this')` and it will add the item to all trackers.
-If you keep adding this way, each tracker will report when his time is due, and you have to worry about
-nothing else.
+Tracker check if they have expired everytime an item is added.
+And they will reset and report when they realise that they have expired
 
-Trackers also have a `#to_json` method for converting tracked items to json.
+## Persistance
 
+Reportier saves items to memory by default however we also support long time 
+persistance with redis, and maybe postgres in the future.
+
+To use redis look on setting defaults below.
 
 ## Setting defaults
 
-Reportier has 3 methods for setting defaults.
-
-`.set_default_reporting_vars`
-
-This is for setting default things you want to track. Example use would be.
+### Persister
+Right now we only support memory and redis.
+Select peristance like so.
 
 ```
-Reportier.set_default_reporting_vars active_users: User.active, open_conversations: Conversation.all.count
+Reportier.configure do |c|
+  c.persister = :redis
+end
 ```
 
-`.set_default_types`
+### Reporters
 
-This is for setting default tracker types, by type we mean how much time it needs for reset.
-So the usage would be
-
-
-```
-Reportier.set_default_types yearly: 1.year, bidaily: 2.days
-```
-
-These new tracker classes will be created and can be used normally like any other tracker,
-also `Reportier.add_to_all` will take this new classes in account.
-Note that if you don't use Rails you can `import` or `extend` `Reportier::Time` to you current environment
-and use `hours(1)`, `days(1)`, `weeks(1)`,  `months(1)`, `years(1)`, years and months are not exact.
-
-`.set_default_reporters`
-
-This is for setting default reporters, by default Reportier will only report to console
-but we also support reporting to slack and logger, and you can easily create your custom reporting methods.
+By default Reportier will only report to logger and console
+but we also support reporting to slack through slack-reporter,
+and you can easily create your custom reporting methods.
 
 ```
-Reportier.set_default_reporters slack: 'slack-reporter', logger: 'logger'
+Reportier.configure do |c|
+  c.reporters = { logger: 'logger', slack: 'slack-reporter' }
+end
+
+## Note you need to ass 'slack-reporter' to your gemfile
 ```
 
 If you want to add custom reporters just add their name and library and then define a `to_#{name)` method to the `Reporter`
 e.x.
 
 ```
-Reportier.set_default_reporters twilio: 'twilio-ruby'
+Reportier.configure { |c| c.reporters = { twilio: 'twilio-ruby' } }
 
 class Reportier::Reporter
-  def to_twilio
-    ## you code here
+  def to_twilio(message)
+    ## Do something with #{message}
   end
 end
 ```
 
-### TODO
+### Default reporting vars
 
-When persisted through redis trackers need to get their starting time from redis
+Sometimes its usefull no have stats from other services or modules.
+To do that you can configure reportier to have some default reporting variables
+
+``` 
+Reportier.configure do |c|
+  # For adding reporting vars
+  c.reporting_vars = { active_users: UserRepo.active.count }
+  # For updating existing reporting vars
+  c.update_reporting_vars {
+    todays_messages: Message.where('created_at > ?', Datetime.yesterday)
+  }
+end
+```
+
+### Full configuration
+
+Ofcourse you can you all this in a single configuration in the startup of your
+application. A full configuration would look something like this.
+
+```
+Reportier.configure do |c|
+  c.persister = :redis
+  c.trackers  = { daily: 60 * 60 * 24
+  c.reporters = { logger: 'logger', slack: 'slack-reporter' }
+  c.reporting_vars = { active_users: UserRepo.active.count }
+end
+```
+
+## Custom Trackers
+Documentation soon
+
+<a name="myfootnote1">1</a>: 

@@ -1,6 +1,6 @@
 module Reportier
   class Defaults
-    attr_accessor :types, :reporting_vars, :reporters,
+    attr_accessor :trackers, :reporting_vars, :reporters,
       :persister
 
     def self.global
@@ -20,9 +20,9 @@ module Reportier
       @reporting_vars.merge!(hash)
     end
 
-    def types=(opts)
-      @types = Hash.new(0)
-      @types.merge! opts
+    def trackers=(opts)
+      @trackers = Hash.new(0)
+      @trackers.merge! opts
     end
 
     def reporters=(opts)
@@ -33,9 +33,9 @@ module Reportier
     private
 
     def initialize_defaults
-      @types          = Hash.new(0)
+      @trackers          = Hash.new(0)
       @reporting_vars = Hash.new
-      @reporters      = Hash.new
+      @reporters      = { console: nil, logger: 'logger' }
       @persister      = :memory
     end
 

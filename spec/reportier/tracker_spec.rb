@@ -37,7 +37,7 @@ RSpec.describe Reportier::Tracker do
 
     before do
       Reportier.configure do |c|
-        c.types          = { minutely: 60 }
+        c.trackers          = { minutely: 60 }
       end
     end
 
