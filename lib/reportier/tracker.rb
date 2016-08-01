@@ -10,10 +10,10 @@ module Reportier
     end
 
     def initialize(opts = {})
+      @type         = opts[:type]
       @name         = Namer.new.name \
         "#{opts[:name]}#{@type && @type.capitalize}Tracker"
       @defaults     = Defaults.global
-      @type         = opts[:type]
       @reporter     = opts[:reporter]  || Reporter.get
       @persister    = opts[:persister] || Persister.get(self)
       @persister.set_date(_set_date)
