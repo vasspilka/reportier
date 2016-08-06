@@ -2,7 +2,7 @@ module Reportier
   class Tracker
     attr_accessor :started_at
     attr_reader :reporter, :persister, :type, :name, :defaults
-      
+
 
     def self.[](type)
       @current       ||= Hash.new

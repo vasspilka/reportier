@@ -12,7 +12,7 @@ module Reportier
       @reporting_vars.merge! Hash(opts[:reporting_vars])
     end
 
-    def configure 
+    def configure
       yield self
     end
 
@@ -29,6 +29,7 @@ module Reportier
       @reporters = opts
       _require_reporter_libraries
     end
+
 
     private
 

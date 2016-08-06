@@ -24,7 +24,7 @@ module Reportier
     end
 
     def to_json
-      "{#{to_hash.map { |k,v| "\"#{k}\": #{v}" }.flatten.join(",\n")}}"
+      to_hash.map { |k,v| "\"#{k}\": #{v}" }.join(",\n")
     end
 
     def clear
@@ -63,7 +63,7 @@ module Reportier
         "#{key}: #{val}\n"
       end
     end
-    
+
     def initialize_reporting_var(name)
       set(name, 0)
     end
@@ -115,7 +115,7 @@ module Reportier
     def get(item)
       Redis.current.get name(item)
     end
-    
+
     def name(item=nil)
       "#{@tracker.name}:#{item}"
     end
