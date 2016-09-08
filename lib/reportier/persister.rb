@@ -24,7 +24,8 @@ module Reportier
     end
 
     def to_json
-      to_hash.map { |k,v| "\"#{k}\": #{v}" }.join(",\n")
+      hash = to_hash.map { |k,v| "\"#{k}\": #{v}" }.join(",\n")
+      "{#{hash}}"
     end
 
     def clear

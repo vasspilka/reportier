@@ -9,8 +9,8 @@ RSpec.describe Reportier::Defaults do
   end
 
   it "set corrent values" do
-    expect(defaults.trackers).to          eq Hash.new
-    expect(defaults.reporters).to      eq Hash.new
+    expect(defaults.trackers).to       eq Hash.new
+    expect(defaults.reporters).to      eq({console: nil, logger: "logger"})
     expect(defaults.reporting_vars).to eq Hash.new
     expect(defaults.persister).to      eq :memory
   end
@@ -28,7 +28,7 @@ RSpec.describe Reportier::Defaults do
 
     before do
       defaults.configure do |c|
-        c.trackers          = { minutely: 60 }
+        c.trackers       = { minutely: 60 }
         c.reporting_vars = { potatoes: 7 }
         c.reporters      = { logger: 'logger' }
         c.persister      = :redis
@@ -37,13 +37,13 @@ RSpec.describe Reportier::Defaults do
 
     it "can be configured" do
       expect(defaults.reporting_vars).to include potatoes: 7
-      expect(defaults.trackers).to          include minutely: 60
+      expect(defaults.trackers).to       include minutely: 60
       expect(defaults.reporters).to      include logger: 'logger'
       expect(defaults.persister).to      eq :redis
     end
 
     after do
-      class Reportier::Defaults 
+      class Reportier::Defaults
         @global = new
       end
     end
