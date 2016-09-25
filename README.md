@@ -1,8 +1,8 @@
 # Reportier the stat tracker
 
-This is a tracker that tracks the count of events. Most notable is that 
-as long as you keep dang items reportier will report automatically
-without using 3rd party software like cron.
+A tracker that tracks the count of events. Most notably it can track and report automatically
+on time (roughly) without the  using 3rd party software like cron, as long as you keep adding items.
+And it has an extremely thin public interface (basically you just add items).
 
 ## Usage
 
@@ -51,8 +51,8 @@ Reportier[:daily].to_json
 # -> "{\"new_user_registrations\": 1}"
 ```
 
-Tracker check if they have expired every time an item is added.
-And they will reset and report when they relies that they have expired
+Each time an item is added the tracker will check if they have expired.
+If they have they will report and reset.
 
 ## Persistence
 
@@ -133,4 +133,9 @@ end
 ## Custom Trackers
 Documentation soon
 
-<a name="myfootnote1">1</a>: 
+
+## ToDo
+Documentation for custom trackers
+Event driven reports
+
+<a name="myfootnote1">1</a>:  Trackers that are configured by `Reportier.configure { |c| c.trackers = ... }`
