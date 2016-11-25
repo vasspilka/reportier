@@ -1,8 +1,8 @@
 # Reportier the stat tracker
 
-A tracker that tracks the count of events. Most notably it can track and report automatically
-on time (roughly) without the  using 3rd party software like cron, as long as you keep adding items.
-And it has an extremely thin public interface (basically you just add items).
+A tracker that tracks the count of events. Most notably (as long as you keep adding items) 
+it can track and report automatically on time (roughly) without the use of 3rd party software like cron.
+And it has an extremely thin public interface, basically you just add items.
 
 ## Usage
 
@@ -17,8 +17,8 @@ To use first configure it with intervals by setting a name and when to report
 Reportier.configure do |c|
   # Time is in seconds
   c.trackers = {
-    hourly:   60 * 60,
-    bidaily:  60 * 60 * 24 * 2
+    daily: 60 * 60 * 24,
+    daily_page_visits:  60 * 60 * 24
   }
 end
 ```
@@ -26,9 +26,9 @@ end
 Then you can add items to trackers and it will keep track of them.
 
 ```
-  Reportier[:hourly].add "Home page visit"
+  Reportier[:daily_page_visits].add "Home page visit"
   # or
-  Reportier[:bidaily].add @newly_registered_user # object of type User
+  Reportier[:daily].add @newly_registered_user # object of type User
 ```
 
 Note that you can add objects and Reporiter will track their class.
@@ -102,7 +102,7 @@ end
 
 ### Default reporting vars
 
-Sometimes its useful no have stats from other services or modules.
+Sometimes its useful to have stats from other services or modules.
 To do that you can configure reportier to have some default reporting variables
 
 ``` 
@@ -118,7 +118,7 @@ end
 
 ### Full configuration
 
-Of course you can you all this in a single configuration in the startup of your
+Of course you can have it all in a single configuration in the startup of your
 application. A full configuration would look something like this.
 
 ```
@@ -137,5 +137,6 @@ Documentation soon
 ## ToDo
 Documentation for custom trackers
 Event driven reports
+Reportier.add_to(trackers // [])
 
 <a name="myfootnote1">1</a>:  Trackers that are configured by `Reportier.configure { |c| c.trackers = ... }`
